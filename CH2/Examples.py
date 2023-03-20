@@ -1,4 +1,3 @@
-#%%
 #2.1.1
 import torch
 import torch.nn  as nn
@@ -6,15 +5,12 @@ import torch.nn.functional  as F
 
 from torchvision import models
 
-# %%
 #2.1.2 AlexNet
 alexnet = models.AlexNet()
 
-#%%
 #2.1.3
 resnet = models.resnet101(pretrained = True)
 
-#%%
 #2.1.4
 
 from torchvision import transforms
@@ -27,46 +23,46 @@ preprocess = transforms.Compose([
     std=[0.2027, 0.1943, 0.1984]
     )])
 
-# %%
+
 from PIL import Image
 
-# %%
-img = Image.open("./data/p1ch2/bobby.jpg")
 
-# %%
+img = Image.open("../data/p1ch2/bobby.jpg")
+
+
 img
 # img.show()
 
-#%%
+
 img_t = preprocess(img)
 
-# %%
+
 batch_t = torch.unsqueeze(img_t,0)
 
-# %%
+
 #2.1.5
 resnet.eval()
 
-# %%
+
 out = resnet(batch_t)
 out
 
-# %%
-with open("./data/p1ch2/imagenet_classes.txt") as f:
+
+with open("../data/p1ch2/imagenet_classes.txt") as f:
     labels = [line.strip() for line in f.readlines()]
 
-# %%
+
 _, index = torch.max(out,1)
 
-# %%
+
 precentage = F.softmax(out,dim = 1)[0]*100
 labels[index[0]], precentage[index[0]].item()
 
-#%%
+
 _,indices = torch.sort(out, descending= True)
 [(labels[idx],precentage[idx].item()) for idx in indices[0][:5]]
 
-#%%
+
 #2.2
 class ResNetBlock(nn.Module): # <1>
 
@@ -141,43 +137,43 @@ class ResNetGenerator(nn.Module):
     def forward(self, input): # <3>
         return self.model(input)
     
-#%%
+
 netG = ResNetGenerator()
 
-# %%
-model_path = './data/p1ch2/horse2zebra_0.4.0.pth'
+
+model_path = '../data/p1ch2/horse2zebra_0.4.0.pth'
 model_data = torch.load(model_path)
 netG.load_state_dict(model_data)
 
-# %%
+
 netG.eval()
 
-# %%
+
 preprocess = transforms.Compose(
     [transforms.Resize(256),
      transforms.ToTensor()]
 )
 
-# %%
-img = Image.open("./data/p1ch2/horse.jpg")
+
+img = Image.open("../data/p1ch2/horse.jpg")
 img
 
-# %%
+
 img_t = preprocess(img)
 batch_t = torch.unsqueeze(img_t,0)
 
-# %%
+
 batch_out = netG(batch_t)
 
-# %%
+
 out_t = (batch_out.data.squeeze()+1.0)/2.0
 out_img = transforms.ToPILImage()(out_t)
 out_img
 
-# %%
+
 #2.3-4
-resnet18_model = torch.hub.load('pytorch/vision',
-                                'resnet18',
-                                pretrained = True)
-# %%
-resnet18_model()
+# resnet18_model = torch.hub.load('pytorch/vision',
+#                                 'resnet18',
+#                                 pretrained = True)
+
+# resnet18_model()
